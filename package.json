@@ -1,0 +1,29 @@
+{
+  "name": "cast-search-param",
+  "version": "0.0.1",
+  "description": "A set of utility functions for casting URLSearchParams parameters",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx tsc",
+    "publish": "npx tsc && npm publish"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wworrall/cast-search-param.git"
+  },
+  "keywords": [
+    "URLSearchParams",
+    "cast"
+  ],
+  "author": "Will Worrall",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wworrall/cast-search-param/issues"
+  },
+  "homepage": "https://github.com/wworrall/cast-search-param#readme",
+  "devDependencies": {
+    "typescript": "^4.6.4"
+  }
+}
