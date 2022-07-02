@@ -1,7 +1,7 @@
 {
-  "name": "cast-search-param",
+  "name": "search-params-utils",
   "version": "0.0.1",
-  "description": "A set of utility functions for casting URLSearchParams parameters",
+  "description": "A set of utility functions working with URLSearchParams",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -14,8 +14,7 @@
     "url": "git+https://github.com/wworrall/cast-search-param.git"
   },
   "keywords": [
-    "URLSearchParams",
-    "cast"
+    "URLSearchParams"
   ],
   "author": "Will Worrall",
   "license": "MIT",
