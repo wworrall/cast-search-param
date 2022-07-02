@@ -61,3 +61,61 @@ export function castDateArray(searchParam: string | null): Date[] | undefined {
   const dateArray = searchParam.split(",");
   return dateArray.map((date) => new Date(date));
 }
+
+/**
+ * Delete provided keys from URLSearchParams and return new URLSearchParams
+ */
+export function deleteSearchParams(
+  params: URLSearchParams,
+  keysToDelete: string[]
+): URLSearchParams {
+  const filteredParams = new URLSearchParams();
+  for (const [key, value] of params) {
+    if (!keysToDelete.includes(key)) {
+      filteredParams.append(key, value);
+    }
+  }
+  return filteredParams;
+}
+
+/**
+ * Add new keys to a URLSearchParams and return new URLSearchParams
+ */
+export function addSearchParams(
+  params: URLSearchParams,
+  newParams: {
+    [key: string]:
+      | string
+      | number
+      | boolean
+      | Date
+      | string[]
+      | number[]
+      | boolean[]
+      | Date[];
+  }
+): URLSearchParams {
+  const extendedParams = new URLSearchParams();
+  for (const [key, value] of params) {
+    extendedParams.set(key, value);
+  }
+
+  for (const [key, value] of Object.entries(newParams)) {
+    if (value !== undefined) {
+      extendedParams.set(key, value.toString());
+    }
+  }
+
+  return extendedParams;
+}
+
+/**
+ * Copy a URLSearchParams and return new URLSearchParams
+ */
+export function copySearchParams(params: URLSearchParams): URLSearchParams {
+  const copiedParams = new URLSearchParams();
+  for (const [key, value] of params) {
+    copiedParams.set(key, value);
+  }
+  return copiedParams;
+}

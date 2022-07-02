@@ -1,6 +1,6 @@
 {
   "name": "search-params-utils",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A set of utility functions working with URLSearchParams",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/wworrall/cast-search-param#readme",
   "devDependencies": {
+    "@types/node": "^18.0.0",
     "typescript": "^4.6.4"
   }
 }
