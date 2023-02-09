@@ -127,6 +127,33 @@ export function addSearchParams(
 }
 
 /**
+ * Generate a setter function for a URLSearchParams
+ * @param key - key to set
+ * @param searchParams - URLSearchParams to set
+ * @param setSearchParams - function to set URLSearchParams
+ * @returns setter function
+ * @example
+ * const [searchParams, setSearchParams] = useState(new URLSearchParams());
+ * const setQuery = generateSetter("query", searchParams, setSearchParams);
+ * setQuery("hello");
+ * // searchParams is now { query: "hello" }
+ * setQuery(undefined);
+ *
+ **/
+export function generateSetter<T extends unknown = string>(
+  key: string,
+  searchParams: URLSearchParams,
+  setSearchParams: (params: URLSearchParams) => void
+) {
+  return (value: T) => {
+    if (value !== undefined && value !== "") searchParams.set(key, `${value}`);
+    else searchParams.delete(key);
+    searchParams.set("page", "1");
+    setSearchParams(searchParams);
+  };
+}
+
+/**
  * Copy a URLSearchParams and return new URLSearchParams
  */
 export function copySearchParams(params: URLSearchParams): URLSearchParams {
