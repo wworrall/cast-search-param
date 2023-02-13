@@ -80,6 +80,23 @@ export function castDateArray(
 }
 
 /**
+ * Extract pagination from URLSearchParams
+ * @param params - URLSearchParams
+ * @returns pagination object
+ * @example
+ * const params = new URLSearchParams("page=1&pageSize=10");
+ * const pagination = extractPagination(params);
+ * // pagination = { page: 1, pageSize: 10 }
+ *
+ **/
+export function extractPagination(params: URLSearchParams) {
+  return {
+    page: castInt(params.get("page")),
+    pageSize: castInt(params.get("pageSize")),
+  };
+}
+
+/**
  * Delete provided keys from URLSearchParams and return new URLSearchParams
  */
 export function deleteSearchParams(
@@ -145,9 +162,14 @@ export function generateSetter<T extends unknown = string>(
   searchParams: URLSearchParams,
   setSearchParams: (params: URLSearchParams) => void
 ) {
-  return (value: T) => {
-    if (value !== undefined && value !== "") searchParams.set(key, `${value}`);
-    else searchParams.delete(key);
+  return (value?: T) => {
+    if (
+      value === undefined ||
+      value === "" ||
+      (Array.isArray(value) && value.length === 0)
+    )
+      searchParams.delete(key);
+    else searchParams.set(key, `${value}`);
     searchParams.set("page", "1");
     setSearchParams(searchParams);
   };
