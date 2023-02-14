@@ -97,6 +97,23 @@ export function extractPagination(params: URLSearchParams) {
 }
 
 /**
+ * Extract sorting from URLSearchParams
+ * @param params - URLSearchParams
+ * @returns sorting object
+ * @example
+ * const params = new URLSearchParams("orderBy=name&orderDirection=asc");
+ * const sorting = extractSorting(params);
+ * // sorting = { orderBy: "name", orderDirection: "ASC" }
+ *
+ **/
+export function extractSorting(params: URLSearchParams) {
+  return {
+    orderBy: castString(params.get("orderBy")),
+    orderDirection: castString(params.get("orderDirection"))?.toUpperCase(),
+  };
+}
+
+/**
  * Delete provided keys from URLSearchParams and return new URLSearchParams
  */
 export function deleteSearchParams(
