@@ -179,9 +179,10 @@ export function generateSetter<T extends unknown = string>(
   searchParams: URLSearchParams,
   setSearchParams: (params: URLSearchParams) => void
 ) {
-  return (value?: T) => {
+  return (value?: T | null) => {
     if (
       value === undefined ||
+      value === null ||
       value === "" ||
       (Array.isArray(value) && value.length === 0)
     )
