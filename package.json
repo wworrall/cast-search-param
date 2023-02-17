@@ -1,7 +1,7 @@
 {
   "name": "search-params-utils",
-  "version": "0.0.8",
-  "description": "A set of utility functions working with URLSearchParams",
+  "version": "1.0.0",
+  "description": "A set of utility functions for working with URLSearchParams",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {

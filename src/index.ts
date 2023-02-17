@@ -1,82 +1,142 @@
-export function castString(
-  searchParam: string | null | undefined
+export function getString(
+  params: URLSearchParams,
+  key: string
 ): string | undefined {
-  if (searchParam === null || searchParam === undefined) {
+  const param = params.get(key);
+  if (param === null || param === "") {
     return undefined;
   }
-  return searchParam;
+  return param;
 }
 
-export function castInt(
-  searchParam: string | null | undefined
+export function getInt(
+  params: URLSearchParams,
+  key: string
 ): number | undefined {
-  if (searchParam === null || searchParam === undefined) {
+  const param = params.get(key);
+  if (param === null || param === "") {
     return undefined;
   }
-  return parseInt(searchParam);
+  try {
+    return parseInt(param);
+  } catch (error) {
+    console.error(`An error occurred while parsing ${key}`, error);
+    return undefined;
+  }
 }
 
-export function castFloat(
-  searchParam: string | null | undefined
+export function getFloat(
+  params: URLSearchParams,
+  key: string
 ): number | undefined {
-  if (searchParam === null || searchParam === undefined) {
+  const param = params.get(key);
+  if (param === null || param === "") {
     return undefined;
   }
-  return parseFloat(searchParam);
+  try {
+    return parseFloat(param);
+  } catch (error) {
+    console.error(`An error occurred while parsing ${key}`, error);
+    return undefined;
+  }
 }
 
-export function castBoolean(
-  searchParam: string | null | undefined
+export function getBoolean(
+  params: URLSearchParams,
+  key: string
 ): boolean | undefined {
-  if (searchParam === null || searchParam === undefined) {
+  const param = params.get(key);
+  if (param === null || param === "") {
     return undefined;
   }
-
-  if (searchParam === "true") return true;
-  else if (searchParam === "false") return false;
-  else return undefined;
+  try {
+    if (param !== "true" && param !== "false") {
+      throw new Error(`string must be either "true" or "false"`);
+    }
+    return param === "true";
+  } catch (error) {
+    console.error(`An error occurred while parsing ${key}`, error);
+    return undefined;
+  }
 }
 
-export function castDate(
-  searchParam: string | null | undefined
-): Date | undefined {
-  if (searchParam === null || searchParam === undefined) {
+export function getDate(params: URLSearchParams, key: string) {
+  const param = params.get(key);
+  if (param === null || param === "") {
     return undefined;
   }
-  return new Date(searchParam);
+  try {
+    return new Date(param);
+  } catch (error) {
+    console.error(`An error occurred while parsing ${key}`, error);
+    return undefined;
+  }
 }
 
-export function castStringArray(searchParam: string | null | undefined) {
-  if (searchParam === null || searchParam === undefined) {
+export function getStringArray(params: URLSearchParams, key: string) {
+  const paramArray = params.getAll(key);
+  if (paramArray.length === 0) {
     return undefined;
   }
-  return searchParam.split(",");
+  return paramArray;
 }
 
-export function castIntArray(
-  searchParam: string | null | undefined
-): number[] | undefined {
-  if (searchParam === null || searchParam === undefined) {
+export function getIntArray(params: URLSearchParams, key: string) {
+  const paramArray = params.getAll(key);
+  if (paramArray.length === 0) {
     return undefined;
   }
-  return searchParam.split(",").map((str) => parseInt(str));
+  try {
+    return paramArray.map((param) => parseInt(param));
+  } catch (error) {
+    console.error(`An error occurred while parsing ${key}`, error);
+    return undefined;
+  }
 }
 
-export function castFloatArray(searchParam: string | null | undefined) {
-  if (searchParam === null || searchParam === undefined) {
+export function getFloatArray(params: URLSearchParams, key: string) {
+  const paramArray = params.getAll(key);
+  if (paramArray.length === 0) {
     return undefined;
   }
-  return searchParam.split(",").map((str) => parseFloat(str));
+  try {
+    return paramArray.map((param) => parseFloat(param));
+  } catch (error) {
+    console.error(`An error occurred while parsing ${key}`, error);
+    return undefined;
+  }
 }
 
-export function castDateArray(
-  searchParam: string | null | undefined
-): Date[] | undefined {
-  if (searchParam === null || searchParam === undefined) {
+export function getBooleanArray(params: URLSearchParams, key: string) {
+  const paramArray = params.getAll(key);
+  if (paramArray.length === 0) {
     return undefined;
   }
-  const dateArray = searchParam.split(",");
-  return dateArray.map((date) => new Date(date));
+  try {
+    return paramArray.map((param) => {
+      if (param !== "true" && param !== "false") {
+        throw new Error(`string must be either "true" or "false"`);
+      }
+      return param === "true";
+    });
+  } catch (error) {
+    console.error(`An error occurred while parsing ${key}`, error);
+    return undefined;
+  }
+}
+
+export function getDateArray(params: URLSearchParams, key: string) {
+  const paramArray = params.getAll(key);
+  if (paramArray.length === 0) {
+    return undefined;
+  }
+
+  try {
+    return paramArray.map((param) => new Date(param));
+  } catch (error) {
+    console.error(`An error occurred while parsing ${key}`, error);
+    return undefined;
+  }
 }
 
 /**
@@ -89,10 +149,12 @@ export function castDateArray(
  * // pagination = { page: 1, pageSize: 10 }
  *
  **/
-export function extractPagination(params: URLSearchParams) {
+export function getPagination(params: URLSearchParams) {
+  const page = getInt(params, "page");
+  const pageSize = getInt(params, "pageSize");
   return {
-    page: castInt(params.get("page")),
-    pageSize: castInt(params.get("pageSize")),
+    page,
+    pageSize,
   };
 }
 
@@ -106,27 +168,39 @@ export function extractPagination(params: URLSearchParams) {
  * // sorting = { orderBy: "name", orderDirection: "ASC" }
  *
  **/
-export function extractSorting(params: URLSearchParams) {
+export function getOrdering(params: URLSearchParams) {
+  const orderBy = getString(params, "orderBy");
+  const orderDirection = getString(params, "orderDirection");
+
   return {
-    orderBy: castString(params.get("orderBy")),
-    orderDirection: castString(params.get("orderDirection"))?.toUpperCase(),
+    orderBy,
+    orderDirection,
   };
 }
 
 /**
- * Delete provided keys from URLSearchParams and return new URLSearchParams
+ * Delete keys from a URLSearchParams and return new URLSearchParams
+ *
+ * @param params - URLSearchParams
+ * @param keysToDelete - keys to delete
+ * @returns new URLSearchParams
+ *
+ * @example
+ * const params = new URLSearchParams("page=1&pageSize=10&orderBy=name&orderDirection=asc");
+ * const newParams = deleteSearchParams(params, ["page", "pageSize"]);
+ * // newParams = "orderBy=name&orderDirection=asc"
+ *
  */
 export function deleteSearchParams(
   params: URLSearchParams,
   keysToDelete: string[]
 ): URLSearchParams {
-  const filteredParams = new URLSearchParams();
-  for (const [key, value] of params) {
-    if (!keysToDelete.includes(key)) {
-      filteredParams.append(key, value);
-    }
+  const newParams = copySearchParams(params);
+  for (const key of keysToDelete) {
+    newParams.delete(key);
   }
-  return filteredParams;
+
+  return newParams;
 }
 
 /**
@@ -146,60 +220,32 @@ export function addSearchParams(
       | Date[];
   }
 ): URLSearchParams {
-  const extendedParams = new URLSearchParams();
-  for (const [key, value] of params) {
-    extendedParams.set(key, value);
-  }
-
+  const newSearchParams = copySearchParams(params);
   for (const [key, value] of Object.entries(newParams)) {
-    if (value !== undefined) {
-      extendedParams.set(key, value.toString());
+    if (value === undefined) continue;
+
+    if (Array.isArray(value)) {
+      if (value.length === 0 || newSearchParams.has(key)) {
+        newSearchParams.delete(key);
+      }
+      for (const item of value) {
+        newSearchParams.append(key, item.toString());
+      }
+    } else {
+      newSearchParams.set(key, value.toString());
     }
   }
 
-  return extendedParams;
-}
-
-/**
- * Generate a setter function for a URLSearchParams
- * @param key - key to set
- * @param searchParams - URLSearchParams to set
- * @param setSearchParams - function to set URLSearchParams
- * @returns setter function
- * @example
- * const [searchParams, setSearchParams] = useState(new URLSearchParams());
- * const setQuery = generateSetter("query", searchParams, setSearchParams);
- * setQuery("hello");
- * // searchParams is now { query: "hello" }
- * setQuery(undefined);
- *
- **/
-export function generateSetter<T extends unknown = string>(
-  key: string,
-  searchParams: URLSearchParams,
-  setSearchParams: (params: URLSearchParams) => void
-) {
-  return (value?: T | null) => {
-    if (
-      value === undefined ||
-      value === null ||
-      value === "" ||
-      (Array.isArray(value) && value.length === 0)
-    )
-      searchParams.delete(key);
-    else searchParams.set(key, `${value}`);
-    searchParams.set("page", "1");
-    setSearchParams(searchParams);
-  };
+  return newSearchParams;
 }
 
 /**
  * Copy a URLSearchParams and return new URLSearchParams
  */
 export function copySearchParams(params: URLSearchParams): URLSearchParams {
-  const copiedParams = new URLSearchParams();
+  const newParams = new URLSearchParams();
   for (const [key, value] of params) {
-    copiedParams.set(key, value);
+    newParams.append(key, value);
   }
-  return copiedParams;
+  return newParams;
 }
