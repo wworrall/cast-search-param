@@ -150,12 +150,20 @@ export function getDateArray(params: URLSearchParams, key: string) {
  *
  **/
 export function getPagination(params: URLSearchParams) {
-  const page = getInt(params, "page");
-  const pageSize = getInt(params, "pageSize");
-  return {
-    page,
-    pageSize,
-  };
+  try {
+    const page = getInt(params, "page");
+    const pageSize = getInt(params, "pageSize");
+    return {
+      page,
+      pageSize,
+    };
+  } catch (error) {
+    console.error(`An error occurred while parsing pagination`, error);
+    return {
+      page: undefined,
+      pageSize: undefined,
+    };
+  }
 }
 
 /**
@@ -169,13 +177,32 @@ export function getPagination(params: URLSearchParams) {
  *
  **/
 export function getOrdering(params: URLSearchParams) {
-  const orderBy = getString(params, "orderBy");
-  const orderDirection = getString(params, "orderDirection");
+  try {
+    const orderBy = getString(params, "orderBy");
+    const orderDirection = getString(params, "orderDirection") as
+      | "asc"
+      | "desc"
+      | undefined;
 
-  return {
-    orderBy,
-    orderDirection,
-  };
+    if (
+      orderDirection !== undefined &&
+      orderDirection !== "asc" &&
+      orderDirection !== "desc"
+    ) {
+      throw new Error(`orderDirection must be either "asc" or "desc"`);
+    }
+
+    return {
+      orderBy,
+      orderDirection,
+    };
+  } catch (error) {
+    console.error(`An error occurred while parsing ordering`, error);
+    return {
+      orderBy: undefined,
+      orderDirection: undefined,
+    };
+  }
 }
 
 /**
