@@ -176,9 +176,11 @@ export function getPagination(params: URLSearchParams) {
  * // sorting = { orderBy: "name", orderDirection: "ASC" }
  *
  **/
-export function getOrdering(params: URLSearchParams) {
+export function getOrdering<T extends string = string>(
+  params: URLSearchParams
+) {
   try {
-    const orderBy = getString(params, "orderBy");
+    const orderBy = getString(params, "orderBy") as T | undefined;
     const orderDirection = getString(params, "orderDirection") as
       | "asc"
       | "desc"
