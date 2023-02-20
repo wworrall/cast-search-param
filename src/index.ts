@@ -208,6 +208,17 @@ export function getOrdering<T extends string = string>(
 }
 
 /**
+ * Copy a URLSearchParams and return new URLSearchParams
+ */
+export function copySearchParams(params: URLSearchParams): URLSearchParams {
+  const newParams = new URLSearchParams();
+  for (const [key, value] of params) {
+    newParams.append(key, value);
+  }
+  return newParams;
+}
+
+/**
  * Delete keys from a URLSearchParams and return new URLSearchParams
  *
  * @param params - URLSearchParams
@@ -237,7 +248,7 @@ export function deleteSearchParams(
  */
 export function addSearchParams(
   params: URLSearchParams,
-  newParams: {
+  paramsToAdd: {
     [key: string]:
       | string
       | number
@@ -249,32 +260,44 @@ export function addSearchParams(
       | Date[];
   }
 ): URLSearchParams {
-  const newSearchParams = copySearchParams(params);
-  for (const [key, value] of Object.entries(newParams)) {
+  const newParams = copySearchParams(params);
+  for (const [key, value] of Object.entries(paramsToAdd)) {
     if (value === undefined) continue;
 
     if (Array.isArray(value)) {
-      if (value.length === 0 || newSearchParams.has(key)) {
-        newSearchParams.delete(key);
+      if (value.length === 0 || newParams.has(key)) {
+        newParams.delete(key);
       }
       for (const item of value) {
-        newSearchParams.append(key, item.toString());
+        newParams.append(key, item.toString());
       }
     } else {
-      newSearchParams.set(key, value.toString());
+      newParams.set(key, value.toString());
     }
   }
 
-  return newSearchParams;
+  return newParams;
 }
 
 /**
- * Copy a URLSearchParams and return new URLSearchParams
+ * Filter a URLSearchParams and return new URLSearchParams
+ * @param params - URLSearchParams
+ * @param keysToKeep - keys to keep
+ * @returns new URLSearchParams
+ * @example
+ * const params = new URLSearchParams("page=1&pageSize=10&orderBy=name&orderDirection=asc");
+ * const newParams = filterSearchParams(params, ["page", "pageSize"]);
+ * // newParams = "page=1&pageSize=10"
  */
-export function copySearchParams(params: URLSearchParams): URLSearchParams {
+export function filterSearchParams(
+  params: URLSearchParams,
+  keysToKeep: string[]
+): URLSearchParams {
   const newParams = new URLSearchParams();
   for (const [key, value] of params) {
-    newParams.append(key, value);
+    if (keysToKeep.includes(key)) {
+      newParams.append(key, value);
+    }
   }
   return newParams;
 }
