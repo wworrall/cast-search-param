@@ -243,21 +243,54 @@ export function deleteSearchParams(
   return newParams;
 }
 
+export type ParamValue =
+  | undefined
+  | string
+  | number
+  | boolean
+  | Date
+  | string[]
+  | number[]
+  | boolean[]
+  | Date[];
+
+/**
+ * Create a URLSearchParams from an object
+ *
+ * @param params - object to convert to URLSearchParams
+ * @returns URLSearchParams
+ *
+ * @example
+ * const params = { page: 1, pageSize: 10, orderBy: "name", orderDirection: "asc" };
+ * const urlSearchParams = createSearchParams(params);
+ * // urlSearchParams = "page=1&pageSize=10&orderBy=name&orderDirection=asc"
+ */
+export function createSearchParams(params: {
+  [key: string]: ParamValue;
+}): URLSearchParams {
+  const urlSearchParams = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value === undefined) continue;
+
+    if (Array.isArray(value)) {
+      for (const item of value) {
+        urlSearchParams.append(key, item.toString());
+      }
+    } else {
+      urlSearchParams.set(key, value.toString());
+    }
+  }
+
+  return urlSearchParams;
+}
+
 /**
  * Add new keys to a URLSearchParams and return new URLSearchParams
  */
 export function addSearchParams(
   params: URLSearchParams,
   paramsToAdd: {
-    [key: string]:
-      | string
-      | number
-      | boolean
-      | Date
-      | string[]
-      | number[]
-      | boolean[]
-      | Date[];
+    [key: string]: ParamValue;
   }
 ): URLSearchParams {
   const newParams = copySearchParams(params);
