@@ -301,3 +301,42 @@ export function filterSearchParams(
   }
   return newParams;
 }
+
+/**
+ * Convert a URLSearchParams to an object with key/value pairs of strings. For
+ * further processing, e.g. with `yup`.
+ *
+ * Optionally, specify an array of keys which should be converted to arrays.
+ *
+ * @param params - URLSearchParams
+ * @param keysToArray - keys to convert to arrays
+ * @returns object with key/value pairs of strings
+ *
+ * @example
+ * const params = new URLSearchParams("page=1&pageSize=10&orderBy=name&orderDirection=asc");
+ * const object = searchParamsToObject(params);
+ * // object = { page: "1", pageSize: "10", orderBy: "name", orderDirection: "asc" }
+ *
+ * @example
+ * const params = new URLSearchParams("array=1&array=2&array=3");
+ * const object = searchParamsToObject(params, ["array"]);
+ * // object = { array: ["1", "2", "3"] }
+ *
+ */
+export function searchParamsToObject(
+  params: URLSearchParams,
+  keysToArray: string[] = []
+): { [key: string]: string | string[] } {
+  const object: { [key: string]: string | string[] } = {};
+  for (const [key, value] of params) {
+    if (keysToArray.includes(key)) {
+      if (object[key] === undefined) {
+        object[key] = [];
+      }
+      (object[key] as string[]).push(value);
+    } else {
+      object[key] = value;
+    }
+  }
+  return object;
+}
